@@ -1,0 +1,2463 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Petualangan Akidah Akhlak VI — Game ASAS Ganjil</title>
+  <style>
+    /* ==========================================================================
+       1. DESIGN TOKENS & RESET (100% OFFLINE SELF-CONTAINED CSS)
+       ========================================================================== */
+    :root {
+      --bg-gradient: linear-gradient(145deg, #064e3b 0%, #065f46 45%, #047857 100%);
+      --surface: #ffffff;
+      --surface-soft: #f0fdf4;
+      --surface-muted: #f8fafc;
+      --text-main: #0f172a;
+      --text-muted: #475569;
+      --primary: #059669;
+      --primary-dark: #047857;
+      --primary-light: #d1fae5;
+      --accent: #f59e0b;
+      --accent-dark: #d97706;
+      --accent-light: #fef3c7;
+      --danger: #e11d48;
+      --danger-light: #ffe4e6;
+      --info: #0284c7;
+      --info-light: #e0f2fe;
+      --border: #e2e8f0;
+      --shadow-sm: 0 2px 8px rgba(15, 23, 42, 0.06);
+      --shadow-md: 0 10px 25px -5px rgba(15, 23, 42, 0.14);
+      --shadow-lg: 0 20px 35px -10px rgba(6, 78, 59, 0.35);
+      --radius-xl: 22px;
+      --radius-lg: 16px;
+      --radius-md: 12px;
+    }
+
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background: var(--bg-gradient);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      padding: 12px;
+      overflow-x: hidden;
+      line-height: 1.5;
+    }
+
+    /* Subtle Islamic geometric pattern overlay via inline SVG data URI */
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      opacity: 0.07;
+      background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='%23ffffff' stroke-width='1.5'%3E%3Cpolygon points='30,2 38,22 58,30 38,38 30,58 22,38 2,30 22,22'/%3E%3Ccircle cx='30' cy='30' r='8'/%3E%3C/g%3E%3C/svg%3E");
+      z-index: 0;
+    }
+
+    .app-shell {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      max-width: 540px;
+      margin: 0 auto;
+      padding-bottom: 28px;
+    }
+
+    /* ==========================================================================
+       2. CARDS, TYPOGRAPHY & BUTTONS
+       ========================================================================== */
+    .card {
+      background: var(--surface);
+      border-radius: var(--radius-xl);
+      padding: 20px;
+      box-shadow: var(--shadow-lg);
+      border: 1px solid rgba(255, 255, 255, 0.6);
+      animation: fadeSlideUp 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 12px;
+      border-radius: 999px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+    }
+
+    .badge-green { background: var(--primary-light); color: var(--primary-dark); }
+    .badge-amber { background: var(--accent-light); color: #92400e; }
+    .badge-blue { background: var(--info-light); color: #075985; }
+    .badge-red { background: var(--danger-light); color: #9f1239; }
+
+    h1 {
+      font-size: 1.45rem;
+      font-weight: 800;
+      color: var(--text-main);
+      line-height: 1.25;
+      margin-top: 8px;
+    }
+
+    h2 {
+      font-size: 1.2rem;
+      font-weight: 800;
+      color: var(--text-main);
+    }
+
+    p.subtitle {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      margin-top: 6px;
+    }
+
+    .btn {
+      width: 100%;
+      border: none;
+      border-radius: var(--radius-lg);
+      padding: 14px 18px;
+      font-size: 0.98rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: transform 0.14s ease, box-shadow 0.14s ease, background 0.15s ease;
+      text-decoration: none;
+      user-select: none;
+    }
+
+    .btn:active {
+      transform: scale(0.97);
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      color: #ffffff;
+      box-shadow: 0 6px 16px rgba(5, 150, 105, 0.35);
+    }
+
+    .btn-primary:hover {
+      background: linear-gradient(135deg, #059669 0%, #047857 100%);
+    }
+
+    .btn-amber {
+      background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+      color: #451a03;
+      box-shadow: 0 6px 16px rgba(245, 158, 11, 0.32);
+    }
+
+    .btn-classroom {
+      background: linear-gradient(135deg, #16a34a 0%, #15803d 100%);
+      color: #ffffff;
+      box-shadow: 0 6px 16px rgba(22, 163, 74, 0.3);
+    }
+
+    .btn-outline {
+      background: #ffffff;
+      color: var(--text-main);
+      border: 2px solid var(--border);
+    }
+
+    .btn-outline:hover {
+      background: var(--surface-muted);
+    }
+
+    .btn-sm {
+      padding: 10px 14px;
+      font-size: 0.86rem;
+      border-radius: var(--radius-md);
+    }
+
+    /* ==========================================================================
+       3. FORM ELEMENTS (IDENTITAS & GOOGLE CLASSROOM)
+       ========================================================================== */
+    .form-group {
+      margin-top: 13px;
+    }
+
+    .form-label {
+      display: block;
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 5px;
+    }
+
+    .form-hint {
+      font-size: 0.74rem;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    .form-input, .form-textarea {
+      width: 100%;
+      border: 2px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 11px 13px;
+      font-size: 0.94rem;
+      font-family: inherit;
+      color: var(--text-main);
+      background: var(--surface-muted);
+      transition: border-color 0.2s, background 0.2s;
+    }
+
+    .form-input:focus, .form-textarea:focus {
+      outline: none;
+      border-color: var(--primary);
+      background: #ffffff;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    /* ==========================================================================
+       4. LEVEL MAP (5 LEVEL PETUALANGAN)
+       ========================================================================== */
+    .level-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .level-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 13px 14px;
+      border-radius: var(--radius-lg);
+      border: 2px solid var(--border);
+      background: #ffffff;
+      transition: all 0.2s ease;
+      cursor: pointer;
+    }
+
+    .level-item.unlocked:hover {
+      border-color: var(--primary);
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .level-item.completed {
+      background: var(--surface-soft);
+      border-color: #6ee7b7;
+    }
+
+    .level-item.locked {
+      background: #f1f5f9;
+      opacity: 0.72;
+      cursor: not-allowed;
+    }
+
+    .level-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.35rem;
+      flex-shrink: 0;
+      background: var(--primary-light);
+    }
+
+    .level-item.locked .level-icon {
+      background: #e2e8f0;
+    }
+
+    .level-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .level-title {
+      font-size: 0.92rem;
+      font-weight: 800;
+      color: var(--text-main);
+    }
+
+    .level-meta {
+      font-size: 0.76rem;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    /* ==========================================================================
+       5. GAMEPLAY HUD, PROGRESS BARS & QUESTION CARDS
+       ========================================================================== */
+    .hud-bar {
+      background: rgba(255, 255, 255, 0.96);
+      backdrop-filter: blur(8px);
+      border-radius: var(--radius-lg);
+      padding: 12px 14px;
+      margin-bottom: 12px;
+      box-shadow: var(--shadow-md);
+    }
+
+    .hud-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .hearts-box {
+      display: flex;
+      align-items: center;
+      gap: 3px;
+      font-size: 1.1rem;
+    }
+
+    .heart {
+      transition: transform 0.25s ease, opacity 0.25s ease;
+    }
+
+    .heart.lost {
+      opacity: 0.22;
+      filter: grayscale(1);
+      transform: scale(0.85);
+    }
+
+    .stats-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--surface-muted);
+      border: 1px solid var(--border);
+      padding: 5px 10px;
+      border-radius: 999px;
+      font-size: 0.8rem;
+      font-weight: 800;
+    }
+
+    .combo-badge {
+      background: var(--accent-light);
+      color: #92400e;
+      border-color: #fcd34d;
+      animation: pulsePop 0.4s ease;
+    }
+
+    .progress-section {
+      margin-top: 10px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .progress-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      margin-bottom: 4px;
+    }
+
+    .progress-track {
+      height: 8px;
+      background: #e2e8f0;
+      border-radius: 999px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      border-radius: 999px;
+      transition: width 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .fill-level { background: linear-gradient(90deg, #10b981, #059669); }
+    .fill-total { background: linear-gradient(90deg, #f59e0b, #ea580c); }
+
+    /* Question Context & Text */
+    .q-type-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+
+    .q-stimulus {
+      background: #f8fafc;
+      border-left: 4px solid var(--primary);
+      padding: 11px 13px;
+      border-radius: 0 var(--radius-md) var(--radius-md) 0;
+      font-size: 0.88rem;
+      color: #1e293b;
+      margin-bottom: 12px;
+      white-space: pre-line;
+    }
+
+    .q-text {
+      font-size: 1.02rem;
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 16px;
+      line-height: 1.48;
+    }
+
+    /* Multiple Choice Options */
+    .options-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .option-btn {
+      width: 100%;
+      text-align: left;
+      background: #ffffff;
+      border: 2px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 13px 14px;
+      font-size: 0.93rem;
+      font-weight: 600;
+      color: var(--text-main);
+      display: flex;
+      align-items: flex-start;
+      gap: 11px;
+      cursor: pointer;
+      transition: all 0.16s ease;
+    }
+
+    .option-btn:hover:not(:disabled) {
+      border-color: var(--primary);
+      background: var(--surface-soft);
+    }
+
+    .option-btn:disabled {
+      cursor: default;
+    }
+
+    .option-letter {
+      width: 28px;
+      height: 28px;
+      border-radius: 9px;
+      background: var(--surface-muted);
+      color: var(--text-main);
+      font-weight: 800;
+      font-size: 0.84rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      border: 1px solid var(--border);
+    }
+
+    .option-btn.correct {
+      background: #ecfdf5;
+      border-color: #10b981;
+      color: #065f46;
+    }
+
+    .option-btn.correct .option-letter {
+      background: #10b981;
+      color: #ffffff;
+      border-color: #10b981;
+    }
+
+    .option-btn.wrong {
+      background: #fff1f2;
+      border-color: #f43f5e;
+      color: #9f1239;
+    }
+
+    .option-btn.wrong .option-letter {
+      background: #f43f5e;
+      color: #ffffff;
+      border-color: #f43f5e;
+    }
+
+    /* Rubrik & Feedback Box */
+    .feedback-box {
+      margin-top: 16px;
+      border-radius: var(--radius-lg);
+      padding: 14px 15px;
+      animation: fadeSlideUp 0.3s ease;
+    }
+
+    .feedback-box.success {
+      background: #ecfdf5;
+      border: 1.5px solid #6ee7b7;
+      color: #064e3b;
+    }
+
+    .feedback-box.error {
+      background: #fff1f2;
+      border: 1.5px solid #fda4af;
+      color: #881337;
+    }
+
+    .feedback-title {
+      font-weight: 800;
+      font-size: 0.95rem;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 5px;
+    }
+
+    .feedback-desc {
+      font-size: 0.87rem;
+      line-height: 1.45;
+    }
+
+    .self-check-panel {
+      margin-top: 12px;
+      padding-top: 10px;
+      border-top: 1px dashed rgba(0, 0, 0, 0.15);
+    }
+
+    .rubric-checklist {
+      list-style: none;
+      margin: 8px 0 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .rubric-checklist li {
+      font-size: 0.83rem;
+      display: flex;
+      align-items: flex-start;
+      gap: 7px;
+      background: rgba(255, 255, 255, 0.75);
+      padding: 7px 10px;
+      border-radius: 10px;
+    }
+
+    /* ==========================================================================
+       6. FINAL REPORT, SUMMARY & CLASSROOM INTEGRATION
+       ========================================================================== */
+    .score-hero {
+      text-align: center;
+      padding: 18px 14px;
+      border-radius: var(--radius-xl);
+      background: linear-gradient(135deg, #ecfdf5 0%, #fef3c7 100%);
+      border: 2px solid #a7f3d0;
+      margin: 12px 0;
+    }
+
+    .score-big {
+      font-size: 2.6rem;
+      font-weight: 900;
+      color: var(--primary-dark);
+      line-height: 1.1;
+    }
+
+    .stat-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin: 14px 0;
+    }
+
+    .stat-tile {
+      background: var(--surface-muted);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 10px 8px;
+      text-align: center;
+    }
+
+    .stat-val {
+      font-size: 1.05rem;
+      font-weight: 800;
+      color: var(--text-main);
+    }
+
+    .stat-lbl {
+      font-size: 0.7rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    .topic-row {
+      margin-bottom: 10px;
+    }
+
+    .topic-head {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.82rem;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    .classroom-box {
+      background: #f0fdf4;
+      border: 2px dashed #22c55e;
+      border-radius: var(--radius-lg);
+      padding: 14px;
+      margin-top: 14px;
+    }
+
+    .report-preview {
+      background: #ffffff;
+      border: 1px solid #cbd5e1;
+      border-radius: 10px;
+      padding: 10px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 0.75rem;
+      color: #1e293b;
+      white-space: pre-wrap;
+      margin: 10px 0;
+      max-height: 170px;
+      overflow-y: auto;
+    }
+
+    /* Toast Notification (No alert() used!) */
+    .toast {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%) translateY(90px);
+      background: #0f172a;
+      color: #ffffff;
+      padding: 11px 18px;
+      border-radius: 999px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25);
+      z-index: 999;
+      opacity: 0;
+      transition: all 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+      pointer-events: none;
+      text-align: center;
+      max-width: 90vw;
+    }
+
+    .toast.show {
+      transform: translateX(-50%) translateY(0);
+      opacity: 1;
+    }
+
+    /* Confetti Canvas */
+    #confetti-canvas {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 998;
+    }
+
+    /* ==========================================================================
+       7. KEYFRAME ANIMATIONS
+       ========================================================================== */
+    @keyframes fadeSlideUp {
+      from { opacity: 0; transform: translateY(14px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes shakeX {
+      0%, 100% { transform: translateX(0); }
+      20% { transform: translateX(-8px); }
+      40% { transform: translateX(8px); }
+      60% { transform: translateX(-6px); }
+      80% { transform: translateX(6px); }
+    }
+
+    @keyframes pulsePop {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.12); }
+      100% { transform: scale(1); }
+    }
+
+    .anim-shake {
+      animation: shakeX 0.42s ease;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    .mt-2 { margin-top: 8px; }
+    .mt-3 { margin-top: 12px; }
+    .mt-4 { margin-top: 16px; }
+  </style>
+</head>
+<body>
+
+  <canvas id="confetti-canvas"></canvas>
+  <div id="toast" class="toast">Pesan</div>
+
+  <main class="app-shell">
+    <!-- ======================================================================
+         SCREEN 1: HALAMAN MULAI, IDENTITAS SISWA & LINK GOOGLE CLASSROOM
+         ====================================================================== -->
+    <section id="screen-home" class="card">
+      <div style="display:flex; justify-content:space-between; align-items:center; gap:8px; flex-wrap:wrap;">
+        <span class="badge badge-green">🕌 ASAS GANJIL 2026/2027</span>
+        <button type="button" id="btn-sound-toggle" class="badge badge-amber" style="border:none; cursor:pointer;">🔊 Suara: Aktif</button>
+      </div>
+
+      <h1>Petualangan Akidah Akhlak Kelas VI</h1>
+      <p class="subtitle">Selesaikan <strong>5 Level (40 Soal Lengkap)</strong> mulai dari Kalimat Istighfar hingga Studi Kasus Akhlak, raih kombo tertinggi, dan kirim rekap nilai langsung ke Google Classroom!</p>
+
+      <!-- Identitas Siswa -->
+      <div class="form-group">
+        <label class="form-label" for="inp-nama">Nama Lengkap Siswa *</label>
+        <input type="text" id="inp-nama" class="form-input" placeholder="Contoh: Ahmad Fauzan" autocomplete="name" />
+      </div>
+
+      <div class="grid-2">
+        <div class="form-group">
+          <label class="form-label" for="inp-kelas">Kelas *</label>
+          <input type="text" id="inp-kelas" class="form-input" value="VI (Enam)" placeholder="Contoh: VI-A" />
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="inp-absen">Nomor Absen *</label>
+          <input type="number" id="inp-absen" class="form-input" min="1" max="60" placeholder="Contoh: 12" />
+        </div>
+      </div>
+
+      <!-- Pengaturan Link Google Classroom -->
+      <div class="form-group">
+        <label class="form-label" for="inp-gcr-link">🔗 Link Tugas Google Classroom (Opsional)</label>
+        <input type="url" id="inp-gcr-link" class="form-input" placeholder="https://classroom.google.com/c/..." />
+        <p class="form-hint">Tersimpan otomatis di HP ini. Siswa bisa langsung membuka tugas Classroom atau membagikan rekap nilainya.</p>
+      </div>
+
+      <div class="mt-4" style="display:flex; flex-direction:column; gap:9px;">
+        <button type="button" id="btn-start-adventure" class="btn btn-primary">
+          🚀 Mulai Petualangan (Level 1)
+        </button>
+        <button type="button" id="btn-open-map" class="btn btn-outline btn-sm">
+          🗺️ Lihat Peta 5 Level & Progres
+        </button>
+      </div>
+
+      <div id="saved-history-banner" class="hidden mt-3" style="background:#f8fafc; border:1px solid var(--border); border-radius:12px; padding:10px 12px; font-size:0.8rem;">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <span id="saved-history-text" style="font-weight:700; color:var(--primary-dark);"></span>
+          <button type="button" id="btn-view-last-report" class="badge badge-blue" style="border:none; cursor:pointer;">Lihat Hasil</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================================================================
+         SCREEN 2: PETA LEVEL (5 LEVEL PETUALANGAN)
+         ====================================================================== -->
+    <section id="screen-map" class="card hidden">
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <span class="badge badge-amber">🗺️ PETA PETUALANGAN</span>
+        <button type="button" id="btn-back-home" class="badge badge-blue" style="border:none; cursor:pointer;">✏️ Ubah Data</button>
+      </div>
+      <h2 class="mt-2">Pilih Level Misi Belajar</h2>
+      <p class="subtitle" id="map-player-greeting">Halo! Selesaikan tiap level untuk membuka gerbang berikutnya.</p>
+
+      <div id="level-list-container" class="level-list"></div>
+
+      <div class="mt-4" style="display:flex; flex-direction:column; gap:8px;">
+        <button type="button" id="btn-map-finish-report" class="btn btn-amber hidden">
+          🏆 Lihat Rekap Nilai Akhir & Kirim Classroom
+        </button>
+        <button type="button" id="btn-reset-progress" class="btn btn-outline btn-sm" style="color:var(--danger); border-color:#fecdd3;">
+          🔄 Reset Progres Permainan
+        </button>
+      </div>
+    </section>
+
+    <!-- ======================================================================
+         SCREEN 3: ARENA BERMAIN KUIS
+         ====================================================================== -->
+    <section id="screen-play" class="hidden">
+      <!-- Top HUD -->
+      <div class="hud-bar">
+        <div class="hud-top">
+          <div class="hearts-box" id="hud-hearts" title="Sisa Nyawa"></div>
+          <div style="display:flex; gap:6px; align-items:center;">
+            <span id="hud-combo" class="stats-pill combo-badge hidden">🔥 2x</span>
+            <span class="stats-pill">⭐ <span id="hud-score">0</span></span>
+            <button type="button" id="btn-quit-to-map" class="stats-pill" style="cursor:pointer;">🗺️ Peta</button>
+          </div>
+        </div>
+
+        <div class="progress-section">
+          <div>
+            <div class="progress-label">
+              <span id="lbl-level-name">Level 1</span>
+              <span id="lbl-level-step">1/8</span>
+            </div>
+            <div class="progress-track">
+              <div id="bar-level" class="progress-fill fill-level" style="width: 12%;"></div>
+            </div>
+          </div>
+          <div>
+            <div class="progress-label">
+              <span>Total 40 Soal</span>
+              <span id="lbl-total-step">1/40</span>
+            </div>
+            <div class="progress-track">
+              <div id="bar-total" class="progress-fill fill-total" style="width: 2.5%;"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Question Card -->
+      <div id="question-card" class="card">
+        <div class="q-type-row">
+          <span id="q-number-badge" class="badge badge-green">Soal #1</span>
+          <span id="q-type-badge" class="badge badge-blue">Pilihan Ganda</span>
+        </div>
+
+        <div id="q-stimulus" class="q-stimulus hidden"></div>
+        <div id="q-text" class="q-text">Memuat pertanyaan...</div>
+
+        <!-- Area Interaktif Berdasarkan Tipe Soal (PG / Isian / Uraian) -->
+        <div id="q-interaction-area"></div>
+
+        <!-- Area Pembahasan Jawaban Langsung -->
+        <div id="q-feedback-area" class="hidden"></div>
+
+        <!-- Tombol Lanjut -->
+        <div id="q-next-wrap" class="mt-4 hidden">
+          <button type="button" id="btn-next-question" class="btn btn-primary">
+            Lanjut Soal Berikutnya ➡️
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================================================================
+         SCREEN 4: MODAL LEVEL SELESAI / GAME OVER
+         ====================================================================== -->
+    <section id="screen-level-result" class="card hidden" style="text-align:center;">
+      <div id="lvl-res-icon" style="font-size:3.2rem; line-height:1;">🎉</div>
+      <h2 id="lvl-res-title" class="mt-2">Level 1 Selesai!</h2>
+      <p id="lvl-res-desc" class="subtitle">Hebat! Kamu berhasil menuntaskan tantangan level ini.</p>
+
+      <div class="stat-grid mt-3">
+        <div class="stat-tile">
+          <div class="stat-val" id="lvl-res-score">0</div>
+          <div class="stat-lbl">Skor Saat Ini</div>
+        </div>
+        <div class="stat-tile">
+          <div class="stat-val" id="lvl-res-acc">100%</div>
+          <div class="stat-lbl">Akurasi Level</div>
+        </div>
+        <div class="stat-tile">
+          <div class="stat-val" id="lvl-res-hearts">5 ❤️</div>
+          <div class="stat-lbl">Sisa Nyawa</div>
+        </div>
+      </div>
+
+      <div id="lvl-res-actions" class="mt-4" style="display:flex; flex-direction:column; gap:9px;"></div>
+    </section>
+
+    <!-- ======================================================================
+         SCREEN 5: LAYAR HASIL AKHIR & INTEGRASI GOOGLE CLASSROOM
+         ====================================================================== -->
+    <section id="screen-final" class="card hidden">
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <span class="badge badge-green">🎓 LAPORAN ASAS AKIDAH AKHLAK VI</span>
+        <span id="final-code-badge" class="badge badge-amber">KODE: -</span>
+      </div>
+
+      <div class="score-hero">
+        <div style="font-size:0.82rem; font-weight:700; color:#065f46;">NILAI AKHIR KONVERSI (0–100)</div>
+        <div class="score-big" id="final-grade-100">0</div>
+        <div id="final-predicate" class="badge badge-green mt-2">Predikat: Mumtaz (Sangat Baik)</div>
+        <div style="font-size:0.8rem; color:#475569; margin-top:6px;">
+          Total Poin Petualangan: <strong id="final-raw-points">0</strong> pts • Max Kombo: <strong id="final-max-combo">0</strong>x
+        </div>
+      </div>
+
+      <div class="stat-grid">
+        <div class="stat-tile">
+          <div class="stat-val" id="final-correct-count">0/40</div>
+          <div class="stat-lbl">Jawaban Benar</div>
+        </div>
+        <div class="stat-tile">
+          <div class="stat-val" id="final-accuracy">0%</div>
+          <div class="stat-lbl">Akurasi Total</div>
+        </div>
+        <div class="stat-tile">
+          <div class="stat-val" id="final-levels-done">0/5</div>
+          <div class="stat-lbl">Level Lulus</div>
+        </div>
+      </div>
+
+      <!-- Rangkuman Evaluasi per Materi -->
+      <div class="mt-3">
+        <h2 style="font-size:0.98rem; margin-bottom:8px;">📊 Rangkuman Penguasaan Materi</h2>
+        <div id="final-topic-breakdown"></div>
+      </div>
+
+      <!-- Integrasi Google Classroom & Rekap CSV -->
+      <div class="classroom-box">
+        <div style="display:flex; align-items:center; gap:8px;">
+          <span style="font-size:1.3rem;">🏫</span>
+          <div>
+            <div style="font-weight:800; font-size:0.94rem; color:#14532d;">Kirim & Rekap ke Google Classroom</div>
+            <div style="font-size:0.76rem; color:#166534;">Salin laporan nilai tervalidasi atau bagikan langsung ke kelas guru.</div>
+          </div>
+        </div>
+
+        <pre id="final-report-text" class="report-preview"></pre>
+
+        <div style="display:flex; flex-direction:column; gap:8px;">
+          <button type="button" id="btn-copy-report" class="btn btn-primary btn-sm">
+            📋 Salin Laporan Nilai (Siap Tempel di Classroom)
+          </button>
+          <button type="button" id="btn-share-classroom" class="btn btn-classroom btn-sm">
+            🚀 Bagikan / Buka Google Classroom
+          </button>
+          <button type="button" id="btn-download-csv" class="btn btn-amber btn-sm">
+            📥 Unduh Rekap Nilai (.CSV untuk Google Sheets/Classroom)
+          </button>
+        </div>
+      </div>
+
+      <div class="mt-4" style="display:flex; gap:8px;">
+        <button type="button" id="btn-final-to-map" class="btn btn-outline btn-sm">🗺️ Peta Level</button>
+        <button type="button" id="btn-play-again" class="btn btn-outline btn-sm">🔄 Main Ulang</button>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    /* ==========================================================================
+       1. BANK DATA LENGKAP 40 SOAL AKIDAH AKHLAK KELAS VI (5 LEVEL PETUALANGAN)
+       ========================================================================== */
+    const LEVELS = [
+      {
+        id: 1,
+        title: "Level 1: Kalimat Istighfar",
+        subtitle: "Makna, bacaan & hikmah memohon ampun (8 Soal)",
+        icon: "🤲",
+        questionIds: [1, 2, 3, 4, 25, 26, 36]
+      },
+      {
+        id: 2,
+        title: "Level 2: Al-Ghaffar & Al-Wasi'",
+        subtitle: "Meneladani sifat Maha Pengampun & Maha Luas (8 Soal)",
+        icon: "✨",
+        questionIds: [5, 6, 7, 27, 28, 37]
+      },
+      {
+        id: 3,
+        title: "Level 3: Iman Qada & Qadar",
+        subtitle: "Ketetapan Allah, ikhtiar & hikmah takdir (8 Soal)",
+        icon: "🌙",
+        questionIds: [8, 9, 10, 11, 12, 29, 30, 38]
+      },
+      {
+        id: 4,
+        title: "Level 4: Akhlak Terpuji & Tercela",
+        subtitle: "Pemaaf, tanggung jawab, adil, bijaksana vs tercela (9 Soal)",
+        icon: "⚖️",
+        questionIds: [13, 14, 15, 16, 17, 18, 19, 20, 21]
+      },
+      {
+        id: 5,
+        title: "Level 5: Tantangan Akhir & Kasus",
+        subtitle: "Analisis studi kasus & penerapan akhlak (9 Soal)",
+        icon: "🏆",
+        questionIds: [22, 23, 24, 31, 32, 33, 34, 35, 39, 40]
+      }
+    ];
+
+    /* Catatan: Agar distribusi tepat 40 soal unik across 5 level, mari kita sesuaikan pembagian id unik:
+       Level 1 (Kalimat Istighfar): 1, 2, 3, 4, 25, 26, 36 (7 soal) -> tambah soal 13? Tidak, kita jaga tema murni:
+       L1: 1, 2, 3, 4, 26, 36 (6 soal)
+       L2: 5, 6, 7, 27, 28, 37 (6 soal)
+       L3: 8, 9, 10, 11, 12, 29, 30, 38 (8 soal)
+       L4: 13, 14, 15, 16, 17, 18, 19, 20, 21, 31, 32, 33 (12 soal)
+       L5: 22, 23, 24, 25, 34, 35, 39, 40 (8 soal)
+       Total = 6 + 6 + 8 + 12 + 8 = 40 soal tepat! */
+    LEVELS[0].questionIds = [1, 2, 3, 4, 26, 36];
+    LEVELS[0].subtitle = "Makna, bacaan & hikmah istighfar (6 Soal)";
+    LEVELS[1].questionIds = [5, 6, 7, 27, 28, 37];
+    LEVELS[1].subtitle = "Asmaul Husna Al-Ghaffar & Al-Wasi' (6 Soal)";
+    LEVELS[2].questionIds = [8, 9, 10, 11, 12, 29, 30, 38];
+    LEVELS[2].subtitle = "Iman kepada Qada & Qadar serta ikhtiar (8 Soal)";
+    LEVELS[3].questionIds = [13, 14, 15, 16, 17, 18, 19, 20, 21, 31, 32, 33];
+    LEVELS[3].subtitle = "Ragam akhlak terpuji & menghindari tercela (12 Soal)";
+    LEVELS[4].questionIds = [22, 23, 24, 25, 34, 35, 39, 40];
+    LEVELS[4].subtitle = "Studi kasus & tantangan akhir ASAS (8 Soal)";
+
+    const QUESTIONS = [
+      // ==================== I. PILIHAN GANDA (1 - 25) ====================
+      {
+        id: 1, level: 1, type: "pg",
+        stimulus: "Raka tidak sengaja menyenggol gelas minuman temannya hingga pecah di kantin. Ia segera merapikan pecahan gelas, meminta maaf dengan tulus, dan berdoa memohon ampunan kepada Allah SWT agar dijauhkan dari sikap ceroboh.",
+        question: "Kalimat istighfar yang paling tepat diucapkan Raka dalam situasi tersebut adalah ....",
+        options: [
+          "Subhanallah wa bihamdihi",
+          "Astaghfirullahal ‘adzim",
+          "Alhamdulillahirabbil ‘alamin",
+          "La haula wa la quwwata illa billah"
+        ],
+        answerIndex: 1,
+        explanation: "Lafaz 'Astaghfirullahal ‘adzim' berarti 'Aku memohon ampun kepada Allah Yang Maha Agung', paling tepat diucapkan saat melakukan kekhilafan atau kesalahan."
+      },
+      {
+        id: 2, level: 1, type: "pg",
+        question: "Makna mendasar dari mengucap kalimat istighfar dalam kehidupan sehari-hari seorang muslim adalah ....",
+        options: [
+          "memohon tambahan harta dan kedudukan yang tinggi di dunia",
+          "menunjukkan kesalehan kepada orang lain agar dipuji sebagai anak baik",
+          "mengakui kesalahan diri sendiri dan memohon ampunan serta perlindungan kepada Allah SWT",
+          "menggugurkan kewajiban salat fardu ketika sedang sibuk belajar"
+        ],
+        answerIndex: 2,
+        explanation: "Istighfar bermakna mengakui kelemahan serta kesalahan diri sendiri di hadapan Allah SWT sambil memohon ampunan dan perlindungan-Nya."
+      },
+      {
+        id: 3, level: 1, type: "pg",
+        stimulus: "Seorang siswa sering lupa mengerjakan PR karena asyik bermain gawai. Setelah mendapat nasihat dari gurunya, ia beristighfar, mengubah jadwal belajarnya, dan tidak mengulangi kebiasaan tersebut.",
+        question: "Hikmah membaca istighfar yang tampak pada perilaku siswa tersebut adalah ....",
+        options: [
+          "hati menjadi gelisah karena terus memikirkan kesalahan masa lalu",
+          "mendorong kesadaran untuk memperbaiki diri dan menjauhi perbuatan keliru",
+          "membuat seseorang merasa paling benar di antara teman-temannya",
+          "menghilangkan kewajiban untuk meminta maaf kepada orang yang dirugikan"
+        ],
+        answerIndex: 1,
+        explanation: "Istighfar yang sungguh-sungguh menumbuhkan kesadaran untuk bertaubat, memperbaiki kebiasaan buruk, dan tidak mengulangi kesalahan."
+      },
+      {
+        id: 4, level: 1, type: "pg",
+        stimulus: "Perhatikan beberapa pernyataan berikut!\n(1) Hati menjadi lebih tenang dan lapang\n(2) Rezeki terasa sempit karena selalu merasa bersalah\n(3) Memperkuat hubungan kedekatan dengan Allah SWT\n(4) Menumbuhkan sikap keras kepala saat dinasihati",
+        question: "Manfaat membiasakan kalimat istighfar ditunjukkan oleh nomor ....",
+        options: [
+          "(1) dan (2)",
+          "(2) dan (4)",
+          "(1) dan (3)",
+          "(3) dan (4)"
+        ],
+        answerIndex: 2,
+        explanation: "Membiasakan istighfar membuat hati menjadi tenang dan lapang (1) serta mempererat kedekatan seorang hamba dengan Allah SWT (3)."
+      },
+      {
+        id: 5, level: 2, type: "pg",
+        stimulus: "Allah SWT memiliki sifat Al-Ghaffar yang berarti Maha Pengampun. Ampunan Allah SWT bersifat luas bagi hamba-Nya yang bersungguh-sungguh bertaubat.",
+        question: "Sikap yang tepat sebagai wujud meneladani Al-Ghaffar dalam pergaulan sehari-hari adalah ....",
+        options: [
+          "menyimpan dendam sampai teman tersebut meminta maaf berkali-kali",
+          "memaafkan kesalahan teman dengan tulus dan tidak mengungkit-ungkitnya lagi",
+          "membiarkan teman berbuat salah tanpa pernah mengingatkannya",
+          "hanya memaafkan teman yang berasal dari kelompok bermain yang sama"
+        ],
+        answerIndex: 1,
+        explanation: "Al-Ghaffar berarti Maha Pengampun dan menutupi kesalahan. Meneladaninya dilakukan dengan memaafkan secara tulus tanpa mengungkit kesalahan."
+      },
+      {
+        id: 6, level: 2, type: "pg",
+        stimulus: "Tabel Asmaul Husna:\n• Al-Ghaffar (Maha Pengampun): Memberi maaf atas kekhilafan orang lain.\n• Al-Wasi' (Maha Luas): Memberi bantuan dan ilmu kepada siapa saja tanpa membeda-bedakan.",
+        question: "Berdasarkan pemahaman tersebut, perilaku yang mencerminkan Al-Wasi' adalah ....",
+        options: [
+          "menyembunyikan cara mengerjakan soal matematika agar nilai sendiri tertinggi",
+          "membatasi pertolongan hanya kepada tetangga yang dekat saja",
+          "berbagi bekal makanan kepada teman yang lupa membawa bekal dengan ikhlas",
+          "menyalahkan keadaan saat mengalami kegagalan dalam lomba"
+        ],
+        answerIndex: 2,
+        explanation: "Al-Wasi' berarti Maha Luas rahmat dan karunia-Nya. Berbagi rezeki/bekal dengan lapang hati kepada teman merupakan wujud nyata meneladani Al-Wasi'."
+      },
+      {
+        id: 7, level: 2, type: "pg",
+        question: "Salah satu cara meneladani Asmaul Husna Al-Wasi' dalam bidang ilmu pengetahuan adalah ....",
+        options: [
+          "merasa ilmu yang dimiliki sudah cukup sehingga tidak perlu membaca buku lagi",
+          "membuka diri untuk terus belajar, bersabar menghadapi kesulitan, dan berbagi manfaat ilmu",
+          "meremehkan teman yang lambat memahami pelajaran di kelas",
+          "menggunakan kepintaran untuk mengejek teman yang mendapat nilai rendah"
+        ],
+        answerIndex: 1,
+        explanation: "Ilmu Allah SWT Maha Luas (Al-Wasi'). Meneladaninya berarti tidak cepat puas, terus mau belajar, lapang dada saat sulit, dan senang berbagi ilmu."
+      },
+      {
+        id: 8, level: 3, type: "pg",
+        question: "Beriman kepada takdir Allah SWT merupakan rukun iman yang keenam. Seorang muslim yang beriman kepada takdir akan menyikapi keberhasilan maupun kegagalan dengan ....",
+        options: [
+          "sombong saat berhasil dan putus asa saat gagal",
+          "pasrah total tanpa berusaha sejak awal",
+          "bersyukur ketika berhasil dan tetap ikhtiar serta sabar ketika menghadapi ujian",
+          "menyalahkan orang tua jika hasil belajar tidak sesuai harapan"
+        ],
+        answerIndex: 2,
+        explanation: "Iman kepada takdir (qada dan qadar) menjadikan seorang muslim bersyukur saat mendapat nikmat serta bersabar dan terus berikhtiar saat diuji."
+      },
+      {
+        id: 9, level: 3, type: "pg",
+        stimulus: "• Qada: Ketentuan Allah SWT sejak zaman azali yang belum diketahui secara pasti oleh makhluk sebelum terjadi.\n• Qadar: Perwujudan atau kenyataan dari ketetapan Allah SWT yang terjadi pada waktu yang telah ditentukan.",
+        question: "Berdasarkan pemahaman tersebut, contoh peristiwa yang menunjukkan qadar adalah ....",
+        options: [
+          "ketetapan Allah SWT bahwa setiap makhluk hidup akan mengalami kematian",
+          "seorang atlet meraih juara lari setelah berlatih rutin dan akhirnya menang saat perlombaan berlangsung",
+          "catatan di Lauhul Mahfuz sebelum manusia dilahirkan ke bumi",
+          "pengetahuan Allah SWT tentang segala sesuatu yang akan terjadi di masa depan"
+        ],
+        answerIndex: 1,
+        explanation: "Kemenangan atlet yang benar-benar terwujud pada saat lomba berlangsung adalah kenyataan dari ketetapan Allah SWT (qadar)."
+      },
+      {
+        id: 10, level: 3, type: "pg",
+        stimulus: "Budi ingin lulus ujian seleksi masuk sekolah favorit. Ia belajar setiap hari, berdoa kepada Allah SWT, dan mengikuti bimbingan belajar.",
+        question: "Hubungan antara ikhtiar Budi dan beriman kepada qada serta qadar adalah ....",
+        options: [
+          "ikhtiar dilakukan karena beriman kepada qada dan qadar tidak mengubah apa pun",
+          "beriman kepada qada dan qadar mendorong seseorang berusaha maksimal lalu bertawakal atas hasilnya",
+          "jika sudah beriman kepada qada dan qadar, belajar keras tidak lagi diperlukan",
+          "hasil ujian semata-mata ditentukan oleh usaha manusia tanpa campur tangan Allah SWT"
+        ],
+        answerIndex: 1,
+        explanation: "Karena manusia tidak mengetahui takdirnya sebelum terjadi, iman kepada qada dan qadar mendorong ikhtiar maksimal disertai doa dan tawakal."
+      },
+      {
+        id: 11, level: 3, type: "pg",
+        stimulus: "Ketika hujan deras turun terus-menerus hingga sebagian jalan tergenang, petani menadah air hujan untuk irigasi sawahnya, sementara warga lain membersihkan saluran air agar tidak tersumbat.",
+        question: "Kesimpulan yang tepat terkait ketentuan Allah SWT tersebut adalah ....",
+        options: [
+          "hujan deras selalu membawa keburukan bagi seluruh manusia",
+          "ketentuan Allah SWT mengandung hikmah dan menuntut manusia bersikap bijak menyikapinya",
+          "air hujan tidak bermanfaat jika tidak langsung mengalir ke sungai",
+          "manusia tidak perlu menjaga lingkungan karena semua sudah diatur"
+        ],
+        answerIndex: 1,
+        explanation: "Setiap ketentuan Allah SWT membawa hikmah; manusia dituntut menyikapinya dengan bijak, ikhtiar menjaga lingkungan, dan mengambil manfaatnya."
+      },
+      {
+        id: 12, level: 3, type: "pg",
+        question: "Hikmah utama beriman kepada qada dan qadar bagi ketenangan jiwa seseorang adalah ....",
+        options: [
+          "menumbuhkan rasa gelisah karena merasa tidak memiliki kendali atas hidup",
+          "membuat seseorang mudah menyerah saat menghadapi tantangan baru",
+          "melahirkan ketenangan batin, optimisme, dan keberanian menghadapi cobaan",
+          "mendorong sikap membanggakan diri atas pencapaian pribadi"
+        ],
+        answerIndex: 2,
+        explanation: "Keyakinan bahwa segala sesuatu diatur oleh Allah Yang Maha Bijaksana melahirkan ketenangan batin, optimisme, dan ketegaran menghadapi cobaan."
+      },
+      {
+        id: 13, level: 4, type: "pg",
+        stimulus: "Dita mengejek hasil karya seni milik Nisa di depan kelas. Nisa merasa sedih, namun setelah Dita meminta maaf, Nisa menerimanya dengan lapang dada dan mengajak Dita memperbaiki bagian yang kurang rapi bersama-sama.",
+        question: "Sikap Nisa menunjukkan akhlak terpuji berupa ....",
+        options: [
+          "pemaaf",
+          "egois",
+          "pilih kasih",
+          "pemarah"
+        ],
+        answerIndex: 0,
+        explanation: "Menerima permintaan maaf orang lain dengan lapang dada tanpa membalas dendam adalah ciri utama akhlak pemaaf."
+      },
+      {
+        id: 14, level: 4, type: "pg",
+        question: "Sebagai pelajar kelas VI, bentuk penerapan sikap tanggung jawab yang paling tepat saat dipercaya menjadi ketua kelompok diskusi adalah ....",
+        options: [
+          "mengerjakan semua tugas sendirian karena tidak percaya kemampuan anggota lain",
+          "membagi tugas secara jelas, memantau jalannya diskusi, dan menyelesaikan laporan tepat waktu",
+          "menyerahkan seluruh pekerjaan kepada satu anggota yang paling pandai",
+          "menunda diskusi hingga hari pengumpulan tugas"
+        ],
+        answerIndex: 1,
+        explanation: "Ketua kelompok yang bertanggung jawab memastikan tugas terbagi merata, proses diskusi berjalan tertib, dan hasil selesai tepat waktu."
+      },
+      {
+        id: 15, level: 4, type: "pg",
+        stimulus: "Pak Ahmad membagikan kue kepada keempat anaknya: dua potong untuk masing-masing anak yang membantu membersihkan halaman, dan satu potong untuk anak yang tidak ikut membantu karena bermalas-malasan, padahal usia mereka hampir sama.",
+        question: "Penilaian yang tepat terhadap perilaku Pak Ahmad adalah ....",
+        options: [
+          "tidak adil karena jumlah kue tidak sama rata",
+          "adil karena memberikan hak sesuai porsi dan peran masing-masing",
+          "pilih kasih karena membedakan usia anak",
+          "fasik karena membagi makanan di rumah"
+        ],
+        answerIndex: 1,
+        explanation: "Adil berarti menempatkan sesuatu pada tempatnya dan memberikan hak sesuai porsi usaha/perannya, bukan sekadar membagi sama rata."
+      },
+      {
+        id: 16, level: 4, type: "pg",
+        question: "Seseorang disebut berbuat bijaksana apabila ....",
+        options: [
+          "memutuskan sesuatu dengan tergesa-gesa agar cepat selesai",
+          "mempertimbangkan dampak baik dan buruk sebelum bertindak serta menempatkan sesuatu pada tempatnya",
+          "selalu mengikuti kemauan teman agar dianggap kompak",
+          "menuruti emosi sesaat ketika menghadapi masalah"
+        ],
+        answerIndex: 1,
+        explanation: "Bijaksana adalah menggunakan akal sehat dan pertimbangan matang mengenai baik-buruknya akibat sebelum mengambil keputusan."
+      },
+      {
+        id: 17, level: 4, type: "pg",
+        question: "Ciri perilaku seseorang yang memiliki sifat pemarah dalam kehidupan sehari-hari adalah ....",
+        options: [
+          "mudah tersinggung, berbicara kasar, dan meledak-ledak saat keinginannya tidak terpenuhi",
+          "mendengarkan pendapat orang lain dengan sabar sebelum menyanggah",
+          "berusaha mencari solusi damai ketika terjadi perselisihan",
+          "menenangkan diri terlebih dahulu sebelum menyampaikan keberatan"
+        ],
+        answerIndex: 0,
+        explanation: "Sifat pemarah (ghadab yang tidak terkendali) ditandai mudah tersinggung, berkata kasar, dan meluapkan emosi secara berlebihan."
+      },
+      {
+        id: 18, level: 4, type: "pg",
+        question: "Perbuatan fasik dalam ajaran akhlak berarti ....",
+        options: [
+          "perbuatan yang keluar dari ketaatan kepada Allah SWT dan melanggar ketentuan agama",
+          "perbuatan menolong orang lain tanpa mengharap imbalan",
+          "kebiasaan menjaga kebersihan lingkungan sekolah",
+          "sikap berhati-hati dalam mengucapkan janji"
+        ],
+        answerIndex: 0,
+        explanation: "Secara bahasa dan istilah akhlak, fasik berarti keluar dari jalur ketaatan kepada Allah SWT dengan sengaja melanggar perintah/larangan-Nya."
+      },
+      {
+        id: 19, level: 4, type: "pg",
+        stimulus: "Seorang pengurus kelas selalu membolehkan teman dekatnya terlambat masuk kelas tanpa ditegur, sementara kepada teman lain ia langsung mencatat dan melaporkannya kepada wali kelas atas kesalahan yang sama.",
+        question: "Perilaku tersebut mencerminkan sikap ....",
+        options: [
+          "adil",
+          "bijaksana",
+          "pilih kasih",
+          "pemaaf"
+        ],
+        answerIndex: 2,
+        explanation: "Membeda-bedakan perlakuan terhadap aturan yang sama hanya karena kedekatan pribadi merupakan contoh sikap pilih kasih (tidak adil)."
+      },
+      {
+        id: 20, level: 4, type: "pg",
+        question: "Perasaan iri hati yang dibiarkan berkembang di dalam hati dapat merugikan diri sendiri karena ....",
+        options: [
+          "membuat seseorang semakin giat berdoa dan bersyukur",
+          "menimbulkan rasa tidak senang atas nikmat orang lain serta memicu permusuhan",
+          "mempererat persahabatan di lingkungan sekolah",
+          "meningkatkan rasa percaya diri secara sehat"
+        ],
+        answerIndex: 1,
+        explanation: "Iri hati (hasad) membuat hati selalu gelisah karena tidak senang melihat kebahagiaan orang lain dan dapat merusak persaudaraan."
+      },
+      {
+        id: 21, level: 4, type: "pg",
+        question: "Sikap egois tampak pada perilaku seseorang yang ....",
+        options: [
+          "mau mengalah demi menjaga kerukunan bersama",
+          "hanya mementingkan keinginan dan kepentingannya sendiri tanpa peduli orang lain",
+          "meminta pendapat anggota kelompok sebelum mengambil keputusan",
+          "berbagi waktu bermain secara bergantian"
+        ],
+        answerIndex: 1,
+        explanation: "Egois adalah sifat mementingkan diri sendiri dan mengabaikan hak maupun perasaan orang lain."
+      },
+      {
+        id: 22, level: 5, type: "pg",
+        stimulus: "Tono merasa kesal karena temannya, Gilang, terpilih menjadi wakil sekolah pada lomba pidato. Tono mulai menyebarkan kabar yang kurang baik tentang Gilang dan menolak membantu saat Gilang kesulitan menyiapkan bahan pidato.",
+        question: "Sikap Tono menggabungkan dua akhlak tercela, yaitu ....",
+        options: [
+          "pemaaf dan bijaksana",
+          "tanggung jawab dan adil",
+          "iri hati dan tidak peduli/egois",
+          "sabar dan tawakal"
+        ],
+        answerIndex: 2,
+        explanation: "Kesal atas prestasi teman hingga menyebarkan keburukan adalah ciri iri hati, sedangkan menolak membantu menunjukkan sikap egois/tidak peduli."
+      },
+      {
+        id: 23, level: 5, type: "pg",
+        question: "Mengapa sifat pemarah dan sikap egois perlu dihindari oleh seorang pelajar?",
+        options: [
+          "karena keduanya dapat merusak hubungan pertemanan dan mengganggu ketenangan belajar",
+          "karena keduanya membuat seseorang menjadi terlalu banyak membantu teman",
+          "karena keduanya mengharuskan seseorang selalu mengalah dalam segala hal",
+          "karena keduanya membuat seseorang terlalu berhati-hati saat berbicara"
+        ],
+        answerIndex: 0,
+        explanation: "Pelajar membutuhkan lingkungan belajar yang rukun dan kondusif; sifat pemarah dan egois memicu pertengkaran serta merusak pertemanan."
+      },
+      {
+        id: 24, level: 5, type: "pg",
+        question: "Ketika melihat teman memperoleh nilai tertinggi karena rajin belajar, sikap terbaik yang mencerminkan keimanan dan akhlak mulia adalah ....",
+        options: [
+          "menganggap nilai tersebut hanya kebetulan semata",
+          "turut gembira, mendoakannya, dan menjadikannya motivasi untuk belajar lebih tekun",
+          "menjauhinya karena merasa tersaingi",
+          "menuntut guru agar nilai teman tersebut dikurangi"
+        ],
+        answerIndex: 1,
+        explanation: "Turut bahagia atas keberhasilan teman dan menjadikannya dorongan positif (fastabiqul khairat) adalah lawan dari sifat iri hati."
+      },
+      {
+        id: 25, level: 5, type: "pg",
+        stimulus: "Seorang siswa menyadari bahwa ia sering berkata kasar saat kalah bermain game. Ia bertekad memperbaiki diri dengan beristighfar, menahan emosi, dan meminta maaf kepada teman yang pernah tersakiti.",
+        question: "Langkah-langkah yang dilakukan siswa tersebut menunjukkan keterpaduan antara ....",
+        options: [
+          "taubat, pengendalian diri, dan perbaikan akhlak",
+          "keegoisan, iri hati, dan kepasrahan",
+          "pilih kasih, kelalaian, dan keputusasaan",
+          "keberanian berdebat dan mempertahankan pendapat"
+        ],
+        answerIndex: 0,
+        explanation: "Beristighfar (taubat kepada Allah), menahan amarah (pengendalian diri), dan meminta maaf (perbaikan akhlak kepada sesama) adalah teladan utama."
+      },
+
+      // ==================== II. ISIAN SINGKAT (26 - 35) ====================
+      {
+        id: 26, level: 1, type: "isian",
+        question: "Bacaan istighfar yang paling umum diucapkan seorang muslim untuk memohon ampunan kepada Allah SWT adalah ....",
+        keywords: ["astaghfirullah", "astagfirullah", "astaghfirullahal", "astagfirullahal"],
+        modelAnswer: "Astaghfirullahal ‘adzim (atau Astaghfirullah)",
+        explanation: "Lafaz lengkapnya adalah 'Astaghfirullahal ‘adzim' (Aku memohon ampun kepada Allah Yang Maha Agung)."
+      },
+      {
+        id: 27, level: 2, type: "isian",
+        question: "Meneladani Asmaul Husna Al-Ghaffar dapat diwujudkan dengan membiasakan diri memberi ........ kepada orang lain yang melakukan kesalahan.",
+        keywords: ["maaf", "ampun", "memaafkan"],
+        modelAnswer: "maaf",
+        explanation: "Sebagaimana Allah SWT Al-Ghaffar (Maha Pengampun), kita hendaknya mudah memberi maaf atas kekhilafan sesama."
+      },
+      {
+        id: 28, level: 2, type: "isian",
+        question: "Asmaul Husna Al-Wasi' mengandung makna bahwa Allah SWT Maha ........, baik dalam ampunan, rahmat, ilmu, maupun karunia-Nya.",
+        keywords: ["luas"],
+        modelAnswer: "Luas",
+        explanation: "Al-Wasi' artinya Yang Maha Luas meliputi rahmat, ilmu, ampunan, dan pemberian-Nya kepada seluruh makhluk."
+      },
+      {
+        id: 29, level: 3, type: "isian",
+        question: "Ketentuan Allah SWT sejak zaman azali yang belum diketahui manusia sebelum terjadi disebut [1], sedangkan perwujudannya dalam kehidupan nyata disebut [2]. (Tuliskan kedua jawabannya!)",
+        keywords: ["qada", "qadha", "qadar", "qodar"],
+        requireAllGroups: [["qada", "qadha", "kada"], ["qadar", "qodar", "kadar"]],
+        modelAnswer: "qada dan qadar",
+        explanation: "Ketetapan sejak zaman azali disebut Qada, sedangkan kenyataan/perwujudannya yang terjadi disebut Qadar."
+      },
+      {
+        id: 30, level: 3, type: "isian",
+        question: "Beriman kepada qada dan qadar membuat seorang muslim tidak mudah berputus asa karena yakin setiap ketetapan Allah SWT pasti memiliki ........",
+        keywords: ["hikmah", "kebaikan", "manfaat", "maksud baik"],
+        modelAnswer: "hikmah (atau kebaikan)",
+        explanation: "Setiap ketentuan Allah SWT mengandung hikmah terbaik bagi hamba-Nya yang bersabar dan bertawakal."
+      },
+      {
+        id: 31, level: 4, type: "isian",
+        question: "Menerima permintaan maaf orang lain tanpa menyimpan dendam di hati merupakan ciri dari sikap ........",
+        keywords: ["pemaaf", "lapang dada"],
+        modelAnswer: "pemaaf",
+        explanation: "Sikap pemaaf ditandai keikhlasan menghapus rasa sakit hati dan tidak membalas kesalahan orang lain."
+      },
+      {
+        id: 32, level: 4, type: "isian",
+        question: "Menyelesaikan tugas piket kelas sesuai jadwal tanpa disuruh guru merupakan contoh perilaku ........",
+        keywords: ["tanggung jawab", "tanggungjawab", "bertanggung jawab"],
+        modelAnswer: "tanggung jawab",
+        explanation: "Menjalankan kewajiban dengan kesadaran sendiri tanpa harus diawasi terus-menerus adalah bukti sikap tanggung jawab."
+      },
+      {
+        id: 33, level: 4, type: "isian",
+        question: "Memberikan hak kepada setiap orang secara proporsional dan tidak memihak disebut berperilaku ........",
+        keywords: ["adil"],
+        modelAnswer: "adil",
+        explanation: "Adil berarti menempatkan sesuatu secara proporsional sesuai hak dan kewajibannya tanpa memihak."
+      },
+      {
+        id: 34, level: 5, type: "isian",
+        question: "Seseorang yang selalu memaksakan kehendaknya sendiri tanpa mempedulikan perasaan orang lain memiliki sikap ........",
+        keywords: ["egois", "egoisme", "mementingkan diri"],
+        modelAnswer: "egois",
+        explanation: "Egois adalah akhlak tercela berupa mementingkan diri sendiri dan memaksakan keinginan pribadi."
+      },
+      {
+        id: 35, level: 5, type: "isian",
+        question: "Perasaan tidak senang melihat orang lain mendapatkan keberuntungan atau kebahagiaan disebut ........",
+        keywords: ["iri", "dengki", "hasad"],
+        modelAnswer: "iri hati (atau dengki / hasad)",
+        explanation: "Iri hati atau dengki (hasad) adalah rasa tidak senang atas nikmat orang lain bahkan berharap nikmat itu hilang."
+      },
+
+      // ==================== III. URAIAN + RUBRIK MANDIRI (36 - 40) ====================
+      {
+        id: 36, level: 1, type: "uraian",
+        question: "Jelaskan makna kalimat istighfar serta sebutkan dua manfaat yang dirasakan seseorang jika membiasakannya dalam kehidupan sehari-hari!",
+        keywords: ["ampun", "kesalahan", "dosa", "tenang", "dekat", "perbaiki", "taubat"],
+        minKeywordMatch: 2,
+        rubricCriteria: [
+          "Menjelaskan makna istighfar sebagai permohonan ampun kepada Allah SWT atas kesalahan/dosa.",
+          "Menyebutkan minimal 2 manfaat (misal: hati menjadi tenang/lapang, mendekatkan diri kepada Allah, mendorong perbaikan diri)."
+        ],
+        modelAnswer: "Makna istighfar adalah permohonan ampun kepada Allah SWT atas dosa dan kekhilafan disertai niat memperbaiki diri. Manfaatnya: (1) hati menjadi lebih tenang dan lapang, (2) memperkuat kedekatan dengan Allah SWT serta mendorong perbaikan sikap."
+      },
+      {
+        id: 37, level: 2, type: "uraian",
+        question: "Bagaimana cara meneladani Asmaul Husna Al-Ghaffar dan Al-Wasi' secara bersamaan dalam kehidupan di sekolah? Berikan masing-masing satu contoh nyata!",
+        keywords: ["maaf", "memaafkan", "ilmu", "berbagi", "bantu", "menolong", "teman", "beda"],
+        minKeywordMatch: 2,
+        rubricCriteria: [
+          "Menjelaskan cara meneladani Al-Ghaffar (mudah memaafkan kesalahan teman tanpa dendam) beserta contohnya.",
+          "Menjelaskan cara meneladani Al-Wasi' (berbagi ilmu/bantuan secara luas tanpa pilih-pilih) beserta contohnya."
+        ],
+        modelAnswer: "Caranya dengan membiasakan saling memaafkan kesalahan teman (Al-Ghaffar) sekaligus lapang hati berbagi bantuan dan ilmu tanpa membeda-bedakan (Al-Wasi'). Contoh Al-Ghaffar: memaafkan teman yang tidak sengaja menyenggol buku hingga jatuh. Contoh Al-Wasi': mengajari teman sebangku pelajaran yang belum dipahaminya dengan sabar."
+      },
+      {
+        id: 38, level: 3, type: "uraian",
+        question: "Mengapa beriman kepada qada dan qadar tidak boleh membuat seseorang bermalas-malasan? Jelaskan keterkaitannya dengan ikhtiar dan hikmah ketentuan Allah SWT!",
+        keywords: ["ikhtiar", "usaha", "berusaha", "doa", "tawakal", "hikmah", "hasil", "tidak tahu"],
+        minKeywordMatch: 2,
+        rubricCriteria: [
+          "Menjelaskan bahwa manusia wajib berikhtiar (berusaha dan berdoa) karena tidak mengetahui takdir sebelum terjadi.",
+          "Mengaitkan dengan keyakinan bahwa setiap ketetapan Allah memiliki hikmah terbaik dan hasil diserahkan dengan tawakal."
+        ],
+        modelAnswer: "Karena manusia tidak mengetahui ketentuan Allah sebelum terjadi, sehingga wajib berikhtiar (belajar dan berusaha sungguh-sungguh) disertai doa. Setiap ketetapan Allah SWT mengandung hikmah terbaik, dan kesungguhan ikhtiar menjadi sebab datangnya keberhasilan sebelum bertawakal."
+      },
+      {
+        id: 39, level: 5, type: "uraian",
+        question: "Bandingkan perilaku adil dan pilih kasih dalam pembagian peran di kelompok belajar! Bagaimana dampaknya terhadap kerja sama kelompok?",
+        keywords: ["adil", "pilih kasih", "tugas", "porsi", "kemampuan", "kompak", "kerjasama", "kerja sama", "kecewa", "iri"],
+        minKeywordMatch: 2,
+        rubricCriteria: [
+          "Membandingkan adil (membagi peran sesuai kemampuan/porsi secara objektif) dengan pilih kasih (mengistimewakan teman dekat saja).",
+          "Menjelaskan dampaknya: adil menumbuhkan kekompakan/semangat, sedangkan pilih kasih memicu kecemburuan dan perpecahan."
+        ],
+        modelAnswer: "Perilaku adil membagi tugas sesuai kemampuan dan kesepakatan secara objektif, sedangkan pilih kasih meringankan tugas teman dekat dan membebani anggota lain. Dampaknya: sikap adil menumbuhkan kekompakan dan semangat gotong royong, sedangkan pilih kasih menimbulkan kekecewaan, iri hati, dan merusak kerja sama."
+      },
+      {
+        id: 40, level: 5, type: "uraian",
+        question: "Di kelasmu ada teman yang mudah marah saat kalah bermain dan sering memaksakan kehendaknya sendiri (egois). Sebagai teman yang baik, langkah-langkah apa yang akan kamu lakukan untuk menasihati dan membantunya berubah menjadi lebih baik?",
+        keywords: ["tenang", "lembut", "sopan", "nasihat", "bicara", "contoh", "bergantian", "sabar", "puji", "semangat"],
+        minKeywordMatch: 2,
+        rubricCriteria: [
+          "Memilih waktu yang tepat (saat emosi sudah tenang) dan berbicara dengan bahasa lembut/sopan.",
+          "Memberikan solusi/pendampingan positif (mengajak bergantian bermain, memberi contoh lapang dada, serta mengapresiasi perubahannya)."
+        ],
+        modelAnswer: "1) Menunggu hingga emosinya tenang sebelum mengajaknya bicara empat mata; 2) Menasihati dengan kata-kata lembut dan sopan bahwa marah dan egois membuat teman tidak nyaman; 3) Memberi teladan sikap lapang dada saat kalah dan mengajak bermain secara bergantian; 4) Memberi pujian saat ia mulai bisa menahan emosi."
+      }
+    ];
+
+    /* ==========================================================================
+       2. OFFLINE WEB AUDIO SOUND EFFECTS (NO EXTERNAL MP3 REQUIRED)
+       ========================================================================== */
+    const SoundFX = {
+      enabled: true,
+      ctx: null,
+      init() {
+        if (!this.ctx && (window.AudioContext || window.webkitAudioContext)) {
+          this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+        }
+      },
+      playTone(freqs, durations, type = "sine", vol = 0.14) {
+        if (!this.enabled) return;
+        try {
+          this.init();
+          if (!this.ctx) return;
+          if (this.ctx.state === "suspended") this.ctx.resume();
+          let time = this.ctx.currentTime;
+          freqs.forEach((f, idx) => {
+            const osc = this.ctx.createOscillator();
+            const gain = this.ctx.createGain();
+            osc.type = type;
+            osc.frequency.setValueAtTime(f, time);
+            gain.gain.setValueAtTime(vol, time);
+            gain.gain.exponentialRampToValueAtTime(0.001, time + durations[idx]);
+            osc.connect(gain);
+            gain.connect(this.ctx.destination);
+            osc.start(time);
+            osc.stop(time + durations[idx]);
+            time += durations[idx] * 0.85;
+          });
+        } catch (e) { /* Ignore audio block */ }
+      },
+      correct() { this.playTone([523.25, 659.25, 783.99], [0.1, 0.1, 0.22], "triangle", 0.16); },
+      wrong() { this.playTone([220, 175], [0.16, 0.25], "sawtooth", 0.12); },
+      levelUp() { this.playTone([523.25, 659.25, 783.99, 1046.5], [0.11, 0.11, 0.11, 0.35], "triangle", 0.18); },
+      click() { this.playTone([440], [0.05], "sine", 0.08); }
+    };
+
+    /* ==========================================================================
+       3. CONFETTI PARTICLE ENGINE (OFFLINE CANVAS)
+       ========================================================================== */
+    function launchConfetti(durationMs = 2400) {
+      const canvas = document.getElementById("confetti-canvas");
+      const ctx = canvas.getContext("2d");
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+
+      const colors = ["#10b981", "#f59e0b", "#3b82f6", "#ec4899", "#8b5cf6", "#fbbf24"];
+      const pieces = Array.from({ length: 85 }, () => ({
+        x: Math.random() * canvas.width,
+        y: Math.random() * -canvas.height,
+        w: 7 + Math.random() * 7,
+        h: 10 + Math.random() * 8,
+        color: colors[Math.floor(Math.random() * colors.length)],
+        vy: 2.8 + Math.random() * 4.2,
+        vx: -2 + Math.random() * 4,
+        rot: Math.random() * 360,
+        vRot: -6 + Math.random() * 12
+      }));
+
+      const end = Date.now() + durationMs;
+      function frame() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        pieces.forEach(p => {
+          p.x += p.vx;
+          p.y += p.vy;
+          p.rot += p.vRot;
+          ctx.save();
+          ctx.translate(p.x, p.y);
+          ctx.rotate((p.rot * Math.PI) / 180);
+          ctx.fillStyle = p.color;
+          ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+          ctx.restore();
+        });
+        if (Date.now() < end) {
+          requestAnimationFrame(frame);
+        } else {
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+        }
+      }
+      requestAnimationFrame(frame);
+    }
+
+    /* ==========================================================================
+       4. APPLICATION STATE & STORAGE MANAGEMENT
+       ========================================================================== */
+    const STORAGE_KEY = "asas_akidah_vi_state_v1";
+    const MAX_LIVES = 5;
+
+    let state = {
+      student: {
+        name: "",
+        kelas: "VI (Enam)",
+        absen: "",
+        classroomUrl: ""
+      },
+      unlockedLevel: 1,
+      completedLevels: [], // [1, 2, ...]
+      lives: MAX_LIVES,
+      score: 0,
+      combo: 0,
+      maxCombo: 0,
+      // answersMap: { [questionId]: { isCorrect: boolean, userAnswer: string, pointsEarned: number } }
+      answersMap: {},
+      currentLevelId: 1,
+      currentStepIndex: 0,
+      validationCode: ""
+    };
+
+    function saveState() {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+      } catch (e) { /* Ignore quota error */ }
+    }
+
+    function loadState() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          state = { ...state, ...parsed };
+        }
+      } catch (e) { /* Ignore parse error */ }
+    }
+
+    function showToast(msg) {
+      const el = document.getElementById("toast");
+      el.textContent = msg;
+      el.classList.add("show");
+      clearTimeout(window._toastTimer);
+      window._toastTimer = setTimeout(() => el.classList.remove("show"), 2600);
+    }
+
+    function switchScreen(screenId) {
+      ["screen-home", "screen-map", "screen-play", "screen-level-result", "screen-final"].forEach(id => {
+        document.getElementById(id).classList.add("hidden");
+      });
+      document.getElementById(screenId).classList.remove("hidden");
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    /* ==========================================================================
+       5. INITIALIZATION & HOME FORM HANDLERS
+       ========================================================================== */
+    function initApp() {
+      loadState();
+
+      // Hydrate form inputs
+      document.getElementById("inp-nama").value = state.student.name || "";
+      document.getElementById("inp-kelas").value = state.student.kelas || "VI (Enam)";
+      document.getElementById("inp-absen").value = state.student.absen || "";
+      document.getElementById("inp-gcr-link").value = state.student.classroomUrl || "";
+
+      updateHomeBanner();
+    }
+
+    function updateHomeBanner() {
+      const answeredCount = Object.keys(state.answersMap).length;
+      const banner = document.getElementById("saved-history-banner");
+      if (answeredCount > 0 && state.student.name) {
+        banner.classList.remove("hidden");
+        document.getElementById("saved-history-text").textContent =
+          `Progres tersimpan: ${state.student.name} (${answeredCount}/40 soal • ${state.score} poin)`;
+      } else {
+        banner.classList.add("hidden");
+      }
+    }
+
+    function validateAndSaveStudentForm() {
+      const name = document.getElementById("inp-nama").value.trim();
+      const kelas = document.getElementById("inp-kelas").value.trim() || "VI (Enam)";
+      const absen = document.getElementById("inp-absen").value.trim();
+      const classroomUrl = document.getElementById("inp-gcr-link").value.trim();
+
+      if (!name) {
+        showToast("⚠️ Isi Nama Lengkap siswa terlebih dahulu!");
+        document.getElementById("inp-nama").focus();
+        return false;
+      }
+      if (!absen) {
+        showToast("⚠️ Isi Nomor Absen terlebih dahulu!");
+        document.getElementById("inp-absen").focus();
+        return false;
+      }
+
+      state.student = { name, kelas, absen, classroomUrl };
+      saveState();
+      return true;
+    }
+
+    document.getElementById("btn-sound-toggle").addEventListener("click", () => {
+      SoundFX.enabled = !SoundFX.enabled;
+      document.getElementById("btn-sound-toggle").textContent = SoundFX.enabled ? "🔊 Suara: Aktif" : "🔇 Suara: Mati";
+      if (SoundFX.enabled) SoundFX.click();
+    });
+
+    document.getElementById("btn-start-adventure").addEventListener("click", () => {
+      if (!validateAndSaveStudentForm()) return;
+      SoundFX.click();
+      // Start at unlocked level (or level 1 if all completed)
+      const targetLvl = state.unlockedLevel <= 5 ? state.unlockedLevel : 1;
+      startLevel(targetLvl);
+    });
+
+    document.getElementById("btn-open-map").addEventListener("click", () => {
+      if (!validateAndSaveStudentForm()) return;
+      SoundFX.click();
+      renderLevelMap();
+      switchScreen("screen-map");
+    });
+
+    document.getElementById("btn-view-last-report").addEventListener("click", () => {
+      SoundFX.click();
+      renderFinalReport();
+      switchScreen("screen-final");
+    });
+
+    /* ==========================================================================
+       6. LEVEL MAP RENDERING & NAVIGATION
+       ========================================================================== */
+    function renderLevelMap() {
+      document.getElementById("map-player-greeting").textContent =
+        `Semangat, ${state.student.name} (Absen ${state.student.absen})! Skor saat ini: ${state.score} pts.`;
+
+      const container = document.getElementById("level-list-container");
+      container.innerHTML = "";
+
+      LEVELS.forEach(lvl => {
+        const isUnlocked = lvl.id <= state.unlockedLevel;
+        const isCompleted = state.completedLevels.includes(lvl.id);
+
+        const lvlCorrect = lvl.questionIds.filter(qid => state.answersMap[qid]?.isCorrect).length;
+        const lvlAnswered = lvl.questionIds.filter(qid => state.answersMap[qid] !== undefined).length;
+
+        const item = document.createElement("div");
+        item.className = `level-item ${isCompleted ? "completed" : isUnlocked ? "unlocked" : "locked"}`;
+
+        let statusBadge = `<span class="badge badge-red">🔒 Terkunci</span>`;
+        if (isCompleted) {
+          statusBadge = `<span class="badge badge-green">✅ ${lvlCorrect}/${lvl.questionIds.length} Benar</span>`;
+        } else if (isUnlocked) {
+          statusBadge = lvlAnswered > 0
+            ? `<span class="badge badge-amber">▶️ Lanjut (${lvlAnswered}/${lvl.questionIds.length})</span>`
+            : `<span class="badge badge-blue">🚀 Mulai</span>`;
+        }
+
+        item.innerHTML = `
+          <div class="level-icon">${isUnlocked ? lvl.icon : "🔒"}</div>
+          <div class="level-info">
+            <div class="level-title">${lvl.title}</div>
+            <div class="level-meta">${lvl.subtitle}</div>
+          </div>
+          <div>${statusBadge}</div>
+        `;
+
+        if (isUnlocked) {
+          item.addEventListener("click", () => {
+            SoundFX.click();
+            startLevel(lvl.id);
+          });
+        } else {
+          item.addEventListener("click", () => {
+            SoundFX.wrong();
+            showToast(`🔒 Selesaikan Level ${lvl.id - 1} dulu untuk membuka level ini!`);
+          });
+        }
+
+        container.appendChild(item);
+      });
+
+      const reportBtn = document.getElementById("btn-map-finish-report");
+      if (Object.keys(state.answersMap).length > 0) {
+        reportBtn.classList.remove("hidden");
+      } else {
+        reportBtn.classList.add("hidden");
+      }
+    }
+
+    document.getElementById("btn-back-home").addEventListener("click", () => {
+      SoundFX.click();
+      updateHomeBanner();
+      switchScreen("screen-home");
+    });
+
+    document.getElementById("btn-map-finish-report").addEventListener("click", () => {
+      SoundFX.click();
+      renderFinalReport();
+      switchScreen("screen-final");
+    });
+
+    document.getElementById("btn-reset-progress").addEventListener("click", () => {
+      SoundFX.click();
+      state.unlockedLevel = 1;
+      state.completedLevels = [];
+      state.lives = MAX_LIVES;
+      state.score = 0;
+      state.combo = 0;
+      state.maxCombo = 0;
+      state.answersMap = {};
+      state.validationCode = "";
+      saveState();
+      renderLevelMap();
+      showToast("🔄 Seluruh progres permainan berhasil direset.");
+    });
+
+    /* ==========================================================================
+       7. GAMEPLAY ENGINE (PG, ISIAN CERDAS, URAIAN RUBRIK MANDIRI)
+       ========================================================================== */
+    function startLevel(levelId) {
+      const levelObj = LEVELS.find(l => l.id === levelId);
+      if (!levelObj) return;
+
+      // Restore lives if 0 when entering a level
+      if (state.lives <= 0) {
+        state.lives = MAX_LIVES;
+      }
+
+      state.currentLevelId = levelId;
+      // Find first unanswered question in this level, or start at 0 if replaying
+      const firstUnanswered = levelObj.questionIds.findIndex(qid => state.answersMap[qid] === undefined);
+      state.currentStepIndex = firstUnanswered !== -1 ? firstUnanswered : 0;
+
+      saveState();
+      switchScreen("screen-play");
+      renderCurrentQuestion();
+    }
+
+    function updateHUD() {
+      // Hearts
+      const heartsEl = document.getElementById("hud-hearts");
+      let heartsHTML = "";
+      for (let i = 1; i <= MAX_LIVES; i++) {
+        heartsHTML += `<span class="heart ${i > state.lives ? "lost" : ""}">❤️</span>`;
+      }
+      heartsEl.innerHTML = heartsHTML;
+
+      // Score & Combo
+      document.getElementById("hud-score").textContent = state.score;
+      const comboEl = document.getElementById("hud-combo");
+      if (state.combo >= 2) {
+        comboEl.textContent = `🔥 ${state.combo}x Kombo`;
+        comboEl.classList.remove("hidden");
+      } else {
+        comboEl.classList.add("hidden");
+      }
+
+      // Progress bars
+      const levelObj = LEVELS.find(l => l.id === state.currentLevelId);
+      const stepNum = state.currentStepIndex + 1;
+      const levelTotal = levelObj.questionIds.length;
+      const totalAnswered = Object.keys(state.answersMap).length;
+
+      document.getElementById("lbl-level-name").textContent = `Level ${levelObj.id}`;
+      document.getElementById("lbl-level-step").textContent = `${stepNum}/${levelTotal}`;
+      document.getElementById("bar-level").style.width = `${Math.round((stepNum / levelTotal) * 100)}%`;
+
+      document.getElementById("lbl-total-step").textContent = `${Math.min(40, totalAnswered)}/40`;
+      document.getElementById("bar-total").style.width = `${Math.round((totalAnswered / 40) * 100)}%`;
+    }
+
+    function renderCurrentQuestion() {
+      updateHUD();
+
+      const levelObj = LEVELS.find(l => l.id === state.currentLevelId);
+      const qId = levelObj.questionIds[state.currentStepIndex];
+      const q = QUESTIONS.find(item => item.id === qId);
+
+      const card = document.getElementById("question-card");
+      card.classList.remove("anim-shake");
+
+      // Badges
+      document.getElementById("q-number-badge").textContent = `Soal #${q.id} • ${levelObj.title.split(":")[0]}`;
+      const typeLabel = q.type === "pg" ? "Pilihan Ganda" : q.type === "isian" ? "Isian Singkat" : "Uraian & Rubrik";
+      document.getElementById("q-type-badge").textContent = typeLabel;
+
+      // Stimulus & Question
+      const stimEl = document.getElementById("q-stimulus");
+      if (q.stimulus) {
+        stimEl.textContent = q.stimulus;
+        stimEl.classList.remove("hidden");
+      } else {
+        stimEl.classList.add("hidden");
+      }
+      document.getElementById("q-text").textContent = q.question;
+
+      // Reset Feedback & Next Button
+      const feedbackArea = document.getElementById("q-feedback-area");
+      feedbackArea.innerHTML = "";
+      feedbackArea.classList.add("hidden");
+      document.getElementById("q-next-wrap").classList.add("hidden");
+
+      const interArea = document.getElementById("q-interaction-area");
+      interArea.innerHTML = "";
+
+      if (q.type === "pg") {
+        renderMultipleChoice(q, interArea);
+      } else if (q.type === "isian") {
+        renderShortAnswer(q, interArea);
+      } else {
+        renderEssayQuestion(q, interArea);
+      }
+    }
+
+    /* --- 7A. PILIHAN GANDA --- */
+    function renderMultipleChoice(q, container) {
+      const letters = ["A", "B", "C", "D"];
+      const list = document.createElement("div");
+      list.className = "options-list";
+
+      q.options.forEach((optText, idx) => {
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "option-btn";
+        btn.innerHTML = `
+          <span class="option-letter">${letters[idx]}</span>
+          <span>${optText}</span>
+        `;
+        btn.addEventListener("click", () => {
+          // Disable all buttons
+          const allBtns = list.querySelectorAll(".option-btn");
+          allBtns.forEach(b => (b.disabled = true));
+
+          const isCorrect = idx === q.answerIndex;
+          btn.classList.add(isCorrect ? "correct" : "wrong");
+          if (!isCorrect) {
+            allBtns[q.answerIndex].classList.add("correct");
+          }
+
+          evaluateAndShowFeedback(q, isCorrect, `${letters[idx]}. ${optText}`);
+        });
+        list.appendChild(btn);
+      });
+
+      container.appendChild(list);
+    }
+
+    /* --- 7B. ISIAN SINGKAT (SMART KEYWORD + SELF-CORRECTION FALLBACK) --- */
+    function renderShortAnswer(q, container) {
+      container.innerHTML = `
+        <div class="form-group" style="margin-top:0;">
+          <input type="text" id="isian-input" class="form-input" placeholder="Ketik jawaban singkatmu di sini..." autocomplete="off" />
+          <p class="form-hint">Tips: Tuliskan kata kunci intinya dengan ejaan yang jelas.</p>
+        </div>
+        <button type="button" id="btn-submit-isian" class="btn btn-primary mt-3">
+          ✅ Periksa Jawaban
+        </button>
+      `;
+
+      const inputEl = document.getElementById("isian-input");
+      const submitBtn = document.getElementById("btn-submit-isian");
+
+      const handleCheck = () => {
+        const val = inputEl.value.trim();
+        if (!val) {
+          showToast("⚠️ Tuliskan jawabanmu terlebih dahulu!");
+          inputEl.focus();
+          return;
+        }
+        inputEl.disabled = true;
+        submitBtn.classList.add("hidden");
+
+        const norm = val.toLowerCase().replace(/[^a-z0-9\s']/g, " ");
+        let isMatch = false;
+
+        if (q.requireAllGroups) {
+          isMatch = q.requireAllGroups.every(group => group.some(kw => norm.includes(kw)));
+        } else {
+          isMatch = q.keywords.some(kw => norm.includes(kw));
+        }
+
+        evaluateAndShowFeedback(q, isMatch, val, !isMatch);
+      };
+
+      submitBtn.addEventListener("click", handleCheck);
+      inputEl.addEventListener("keydown", e => {
+        if (e.key === "Enter") handleCheck();
+      });
+    }
+
+    /* --- 7C. URAIAN (SMART KEYWORD + RUBRIK PENILAIAN MANDIRI) --- */
+    function renderEssayQuestion(q, container) {
+      container.innerHTML = `
+        <div class="form-group" style="margin-top:0;">
+          <textarea id="uraian-input" class="form-textarea" rows="4" placeholder="Tuliskan penjelasanmu secara runtut dan jelas..."></textarea>
+          <p class="form-hint">Setelah dikirim, sistem mencocokkan kata kunci dan menampilkan rubrik penilaian mandiri.</p>
+        </div>
+        <button type="button" id="btn-submit-uraian" class="btn btn-primary mt-3">
+          📝 Kirim Jawaban Uraian
+        </button>
+      `;
+
+      const textEl = document.getElementById("uraian-input");
+      const submitBtn = document.getElementById("btn-submit-uraian");
+
+      submitBtn.addEventListener("click", () => {
+        const val = textEl.value.trim();
+        if (val.length < 8) {
+          showToast("⚠️ Tuliskan uraian jawaban minimal beberapa kata yang jelas!");
+          textEl.focus();
+          return;
+        }
+        textEl.disabled = true;
+        submitBtn.classList.add("hidden");
+
+        const norm = val.toLowerCase();
+        const matchedCount = q.keywords.filter(kw => norm.includes(kw)).length;
+        const autoPass = matchedCount >= (q.minKeywordMatch || 2);
+
+        evaluateAndShowFeedback(q, autoPass, val, true);
+      });
+    }
+
+    /* --- 7D. EVALUASI SKOR, KOMBO, NYAWA & PEMBAHASAN LANGSUNG --- */
+    function evaluateAndShowFeedback(q, isCorrect, userAnswerText, allowSelfVerify = false) {
+      const prevRecord = state.answersMap[q.id];
+      let pointsEarned = 0;
+
+      if (isCorrect) {
+        SoundFX.correct();
+        state.combo += 1;
+        if (state.combo > state.maxCombo) state.maxCombo = state.combo;
+
+        const basePts = q.type === "pg" ? 20 : q.type === "isian" ? 25 : 35;
+        const comboBonus = state.combo >= 2 ? Math.min(20, (state.combo - 1) * 5) : 0;
+        pointsEarned = basePts + comboBonus;
+
+        // Prevent score farming if replaying an already-correct question
+        if (!prevRecord || !prevRecord.isCorrect) {
+          state.score += pointsEarned;
+        } else {
+          pointsEarned = prevRecord.pointsEarned;
+        }
+      } else {
+        SoundFX.wrong();
+        state.combo = 0;
+        state.lives = Math.max(0, state.lives - 1);
+        document.getElementById("question-card").classList.add("anim-shake");
+      }
+
+      state.answersMap[q.id] = {
+        isCorrect,
+        userAnswer: userAnswerText,
+        pointsEarned
+      };
+
+      saveState();
+      updateHUD();
+
+      // Build Feedback Box
+      const fbArea = document.getElementById("q-feedback-area");
+      fbArea.classList.remove("hidden");
+
+      let extraBlock = "";
+      if (q.type === "isian") {
+        extraBlock += `<div class="mt-2" style="font-size:0.84rem;"><strong>Kunci Jawaban:</strong> ${q.modelAnswer}</div>`;
+      }
+
+      if (q.type === "uraian") {
+        const criteriaItems = q.rubricCriteria.map(c => `<li><span>📌</span><span>${c}</span></li>`).join("");
+        extraBlock += `
+          <div class="mt-2" style="font-size:0.83rem; background:rgba(255,255,255,0.7); padding:9px; border-radius:10px;">
+            <strong>Contoh Jawaban Ideal:</strong><br/>${q.modelAnswer}
+          </div>
+          <div class="self-check-panel">
+            <div style="font-size:0.8rem; font-weight:800;">🔍 Rubrik Koreksi Mandiri (Sesuaikan jika jawabanmu sudah mencakup poin ini):</div>
+            <ul class="rubric-checklist">${criteriaItems}</ul>
+            <div style="display:flex; gap:8px;">
+              <button type="button" id="btn-self-yes" class="btn btn-primary btn-sm">✅ Sudah Sesuai Rubrik</button>
+              <button type="button" id="btn-self-no" class="btn btn-outline btn-sm">❌ Belum Sesuai</button>
+            </div>
+          </div>
+        `;
+      } else if (allowSelfVerify && !isCorrect) {
+        // Option for short answer typo self-correction
+        extraBlock += `
+          <div class="self-check-panel">
+            <div style="font-size:0.78rem; margin-bottom:6px;">Jika maksud jawabanmu sudah benar (hanya berbeda ejaan), kamu bisa mengklaim benar:</div>
+            <button type="button" id="btn-claim-typo" class="btn btn-outline btn-sm">✨ Klaim Jawaban Benar (Beda Ejaan)</button>
+          </div>
+        `;
+      }
+
+      fbArea.innerHTML = `
+        <div class="feedback-box ${isCorrect ? "success" : "error"}">
+          <div class="feedback-title">
+            ${isCorrect ? `🎉 Jawaban Tepat! (+${pointsEarned} Poin)` : `💡 Kurang Tepat! (-1 Nyawa)`}
+          </div>
+          <div class="feedback-desc">
+            <strong>Pembahasan:</strong> ${q.explanation}
+          </div>
+          ${extraBlock}
+        </div>
+      `;
+
+      // Bind self-verification buttons if present
+      const claimBtn = document.getElementById("btn-claim-typo");
+      if (claimBtn) {
+        claimBtn.addEventListener("click", () => {
+          state.lives = Math.min(MAX_LIVES, state.lives + 1);
+          evaluateAndShowFeedback(q, true, userAnswerText, false);
+          showToast("✅ Jawaban dikoreksi menjadi Benar!");
+        });
+      }
+
+      const selfYesBtn = document.getElementById("btn-self-yes");
+      const selfNoBtn = document.getElementById("btn-self-no");
+      if (selfYesBtn && selfNoBtn) {
+        selfYesBtn.addEventListener("click", () => {
+          if (!state.answersMap[q.id].isCorrect) {
+            state.lives = Math.min(MAX_LIVES, state.lives + 1);
+            evaluateAndShowFeedback(q, true, userAnswerText, false);
+          }
+          showToast("✅ Dinilai Benar sesuai rubrik mandiri!");
+        });
+        selfNoBtn.addEventListener("click", () => {
+          if (state.answersMap[q.id].isCorrect) {
+            state.score = Math.max(0, state.score - state.answersMap[q.id].pointsEarned);
+            state.answersMap[q.id].isCorrect = false;
+            state.answersMap[q.id].pointsEarned = 0;
+            state.combo = 0;
+            state.lives = Math.max(0, state.lives - 1);
+            saveState();
+            updateHUD();
+          }
+          showToast("📝 Dicatat untuk bahan belajar kembali.");
+        });
+      }
+
+      // Show Next Button
+      const nextWrap = document.getElementById("q-next-wrap");
+      const nextBtn = document.getElementById("btn-next-question");
+      const levelObj = LEVELS.find(l => l.id === state.currentLevelId);
+
+      if (state.lives <= 0) {
+        nextBtn.textContent = "💔 Nyawa Habis — Lihat Status";
+      } else if (state.currentStepIndex + 1 >= levelObj.questionIds.length) {
+        nextBtn.textContent = `🏁 Selesaikan ${levelObj.title.split(":")[0]}`;
+      } else {
+        nextBtn.textContent = "Lanjut Soal Berikutnya ➡️";
+      }
+
+      nextWrap.classList.remove("hidden");
+    }
+
+    document.getElementById("btn-next-question").addEventListener("click", () => {
+      SoundFX.click();
+
+      // Check Game Over (0 lives)
+      if (state.lives <= 0) {
+        showLevelOutcome(false);
+        return;
+      }
+
+      const levelObj = LEVELS.find(l => l.id === state.currentLevelId);
+      if (state.currentStepIndex + 1 < levelObj.questionIds.length) {
+        state.currentStepIndex += 1;
+        saveState();
+        renderCurrentQuestion();
+      } else {
+        showLevelOutcome(true);
+      }
+    });
+
+    document.getElementById("btn-quit-to-map").addEventListener("click", () => {
+      SoundFX.click();
+      renderLevelMap();
+      switchScreen("screen-map");
+    });
+
+    /* ==========================================================================
+       8. LEVEL COMPLETION / GAME OVER SCREEN
+       ========================================================================== */
+    function showLevelOutcome(passed) {
+      const levelObj = LEVELS.find(l => l.id === state.currentLevelId);
+      const lvlCorrect = levelObj.questionIds.filter(qid => state.answersMap[qid]?.isCorrect).length;
+      const lvlAcc = Math.round((lvlCorrect / levelObj.questionIds.length) * 100);
+
+      const iconEl = document.getElementById("lvl-res-icon");
+      const titleEl = document.getElementById("lvl-res-title");
+      const descEl = document.getElementById("lvl-res-desc");
+      const actionsEl = document.getElementById("lvl-res-actions");
+
+      document.getElementById("lvl-res-score").textContent = state.score;
+      document.getElementById("lvl-res-acc").textContent = `${lvlAcc}%`;
+      document.getElementById("lvl-res-hearts").textContent = `${state.lives} ❤️`;
+
+      actionsEl.innerHTML = "";
+
+      if (passed) {
+        SoundFX.levelUp();
+        launchConfetti(2600);
+
+        if (!state.completedLevels.includes(levelObj.id)) {
+          state.completedLevels.push(levelObj.id);
+        }
+        if (levelObj.id < 5 && state.unlockedLevel <= levelObj.id) {
+          state.unlockedLevel = levelObj.id + 1;
+        }
+        // Bonus +1 life on level completion (up to 5)
+        if (state.lives < MAX_LIVES) state.lives += 1;
+        saveState();
+
+        iconEl.textContent = levelObj.id === 5 ? "🏆" : "🎉";
+        titleEl.textContent = levelObj.id === 5 ? "Seluruh Petualangan Tuntas!" : `${levelObj.title} Selesai!`;
+        descEl.textContent = levelObj.id === 5
+          ? "MasyaAllah! Kamu telah menyelesaikan seluruh 5 Level (40 Soal) ASAS Akidah Akhlak Kelas VI."
+          : `Hebat! Gerbang Level ${levelObj.id + 1} kini terbuka dan kamu mendapat bonus +1 Nyawa!`;
+
+        if (levelObj.id < 5) {
+          const btnNextLvl = document.createElement("button");
+          btnNextLvl.type = "button";
+          btnNextLvl.className = "btn btn-primary";
+          btnNextLvl.textContent = `🚀 Lanjut ke Level ${levelObj.id + 1}`;
+          btnNextLvl.addEventListener("click", () => {
+            SoundFX.click();
+            startLevel(levelObj.id + 1);
+          });
+          actionsEl.appendChild(btnNextLvl);
+        }
+
+        const btnReport = document.createElement("button");
+        btnReport.type = "button";
+        btnReport.className = levelObj.id === 5 ? "btn btn-primary" : "btn btn-amber";
+        btnReport.textContent = "📊 Lihat Hasil Akhir & Rekap Classroom";
+        btnReport.addEventListener("click", () => {
+          SoundFX.click();
+          renderFinalReport();
+          switchScreen("screen-final");
+        });
+        actionsEl.appendChild(btnReport);
+      } else {
+        iconEl.textContent = "💔";
+        titleEl.textContent = "Nyawa Habis!";
+        descEl.textContent = "Jangan menyerah! Pelajari pembahasan tadi, isi ulang nyawa, dan coba selesaikan level ini lagi.";
+
+        const btnRetry = document.createElement("button");
+        btnRetry.type = "button";
+        btnRetry.className = "btn btn-primary";
+        btnRetry.textContent = "🔄 Isi Ulang Nyawa & Ulangi Level Ini";
+        btnRetry.addEventListener("click", () => {
+          SoundFX.click();
+          state.lives = MAX_LIVES;
+          // Clear answers for this level so student retries cleanly
+          levelObj.questionIds.forEach(qid => delete state.answersMap[qid]);
+          saveState();
+          startLevel(levelObj.id);
+        });
+        actionsEl.appendChild(btnRetry);
+
+        const btnSeeScore = document.createElement("button");
+        btnSeeScore.type = "button";
+        btnSeeScore.className = "btn btn-outline";
+        btnSeeScore.textContent = "📊 Lihat Rekap Sementara";
+        btnSeeScore.addEventListener("click", () => {
+          SoundFX.click();
+          renderFinalReport();
+          switchScreen("screen-final");
+        });
+        actionsEl.appendChild(btnSeeScore);
+      }
+
+      const btnMap = document.createElement("button");
+      btnMap.type = "button";
+      btnMap.className = "btn btn-outline btn-sm";
+      btnMap.textContent = "🗺️ Kembali ke Peta Level";
+      btnMap.addEventListener("click", () => {
+        SoundFX.click();
+        renderLevelMap();
+        switchScreen("screen-map");
+      });
+      actionsEl.appendChild(btnMap);
+
+      switchScreen("screen-level-result");
+    }
+
+    /* ==========================================================================
+       9. FINAL EVALUATION REPORT, CSV EXPORT & GOOGLE CLASSROOM INTEGRATION
+       ========================================================================== */
+    function generateValidationCode(name, absen, grade100, correctCount) {
+      const raw = `${name.toUpperCase()}|${absen}|${grade100}|${correctCount}|AKIDAH6`;
+      let hash = 0;
+      for (let i = 0; i < raw.length; i++) {
+        hash = ((hash << 5) - hash) + raw.charCodeAt(i);
+        hash |= 0;
+      }
+      const hex = Math.abs(hash).toString(16).toUpperCase().padStart(6, "0").slice(0, 6);
+      return `AK6-${grade100}-${hex}`;
+    }
+
+    function getPredicate(grade100) {
+      if (grade100 >= 90) return { label: "Mumtaz (Sangat Baik)", badge: "badge-green" };
+      if (grade100 >= 80) return { label: "Jayyid Jiddan (Baik Sekali)", badge: "badge-green" };
+      if (grade100 >= 70) return { label: "Jayyid (Baik)", badge: "badge-blue" };
+      return { label: "Perlu Pendampingan Belajar", badge: "badge-amber" };
+    }
+
+    function renderFinalReport() {
+      const totalQuestions = QUESTIONS.length; // 40
+      const correctCount = QUESTIONS.filter(q => state.answersMap[q.id]?.isCorrect).length;
+      const answeredCount = Object.keys(state.answersMap).length;
+      const grade100 = Math.round((correctCount / totalQuestions) * 100);
+      const accuracy = answeredCount > 0 ? Math.round((correctCount / answeredCount) * 100) : 0;
+
+      const code = generateValidationCode(state.student.name, state.student.absen, grade100, correctCount);
+      state.validationCode = code;
+      saveState();
+
+      const pred = getPredicate(grade100);
+
+      document.getElementById("final-code-badge").textContent = `KODE: ${code}`;
+      document.getElementById("final-grade-100").textContent = grade100;
+      const predEl = document.getElementById("final-predicate");
+      predEl.textContent = `Predikat: ${pred.label}`;
+      predEl.className = `badge ${pred.badge} mt-2`;
+
+      document.getElementById("final-raw-points").textContent = state.score;
+      document.getElementById("final-max-combo").textContent = state.maxCombo;
+      document.getElementById("final-correct-count").textContent = `${correctCount}/40`;
+      document.getElementById("final-accuracy").textContent = `${accuracy}%`;
+      document.getElementById("final-levels-done").textContent = `${state.completedLevels.length}/5`;
+
+      // Per-topic breakdown
+      const topicContainer = document.getElementById("final-topic-breakdown");
+      topicContainer.innerHTML = "";
+      const topicLines = [];
+
+      LEVELS.forEach(lvl => {
+        const lCorrect = lvl.questionIds.filter(qid => state.answersMap[qid]?.isCorrect).length;
+        const lTotal = lvl.questionIds.length;
+        const pct = Math.round((lCorrect / lTotal) * 100);
+        const shortName = lvl.title.replace(/^Level \d+:\s*/, "");
+        topicLines.push(`- ${shortName}: ${lCorrect}/${lTotal} (${pct}%)`);
+
+        const row = document.createElement("div");
+        row.className = "topic-row";
+        row.innerHTML = `
+          <div class="topic-head">
+            <span>${lvl.icon} ${shortName}</span>
+            <span>${lCorrect}/${lTotal} (${pct}%)</span>
+          </div>
+          <div class="progress-track">
+            <div class="progress-fill ${pct >= 75 ? "fill-level" : "fill-total"}" style="width:${pct}%"></div>
+          </div>
+        `;
+        topicContainer.appendChild(row);
+      });
+
+      // Formatted text report for Google Classroom
+      const nowStr = new Date().toLocaleString("id-ID", { dateStyle: "medium", timeStyle: "short" });
+      const reportText = [
+        "=== LAPORAN NILAI ASAS AKIDAH AKHLAK VI ===",
+        `Nama Siswa   : ${state.student.name}`,
+        `Kelas / Absen: ${state.student.kelas} / No. ${state.student.absen}`,
+        `Nilai Akhir  : ${grade100} / 100 (${pred.label})`,
+        `Benar Total  : ${correctCount} dari 40 Soal`,
+        `Poin & Kombo : ${state.score} pts (Max Kombo ${state.maxCombo}x)`,
+        `Level Tuntas : ${state.completedLevels.length} dari 5 Level`,
+        `Waktu Selesai: ${nowStr}`,
+        `Kode Validasi: ${code}`,
+        "",
+        "Rincian Per Materi:",
+        ...topicLines,
+        "============================================"
+      ].join("\n");
+
+      document.getElementById("final-report-text").textContent = reportText;
+    }
+
+    // Copy to Clipboard (using textarea + execCommand fallback for maximum compatibility)
+    function copyReportToClipboard(text) {
+      const ta = document.createElement("textarea");
+      ta.value = text;
+      ta.style.position = "fixed";
+      ta.style.opacity = "0";
+      document.body.appendChild(ta);
+      ta.select();
+      ta.setSelectionRange(0, 99999);
+      let ok = false;
+      try {
+        ok = document.execCommand("copy");
+      } catch (e) {
+        ok = false;
+      }
+      document.body.removeChild(ta);
+      return ok;
+    }
+
+    document.getElementById("btn-copy-report").addEventListener("click", () => {
+      SoundFX.click();
+      const text = document.getElementById("final-report-text").textContent;
+      if (copyReportToClipboard(text)) {
+        showToast("📋 Laporan nilai disalin! Tinggal tempel di Google Classroom.");
+      } else {
+        showToast("⚠️ Tekan dan tahan kotak teks laporan untuk menyalin.");
+      }
+    });
+
+    document.getElementById("btn-share-classroom").addEventListener("click", async () => {
+      SoundFX.click();
+      const text = document.getElementById("final-report-text").textContent;
+      copyReportToClipboard(text);
+
+      const customUrl = state.student.classroomUrl;
+      const targetShareUrl = customUrl && customUrl.startsWith("http")
+        ? customUrl
+        : `https://classroom.google.com/u/0/share?url=${encodeURIComponent(window.location.href)}&title=${encodeURIComponent("Nilai ASAS Akidah Akhlak VI - " + state.student.name)}`;
+
+      // Try native Web Share API on mobile first if available, otherwise open Google Classroom URL
+      if (navigator.share) {
+        try {
+          await navigator.share({
+            title: `Nilai ASAS Akidah Akhlak VI - ${state.student.name}`,
+            text: text
+          });
+          return;
+        } catch (err) {
+          // User cancelled or unsupported -> fallback to opening Classroom link
+        }
+      }
+
+      showToast("📋 Laporan tersalin! Membuka Google Classroom...");
+      setTimeout(() => {
+        window.open(targetShareUrl, "_blank", "noopener,noreferrer");
+      }, 450);
+    });
+
+    document.getElementById("btn-download-csv").addEventListener("click", () => {
+      SoundFX.click();
+      const totalQuestions = QUESTIONS.length;
+      const correctCount = QUESTIONS.filter(q => state.answersMap[q.id]?.isCorrect).length;
+      const grade100 = Math.round((correctCount / totalQuestions) * 100);
+      const pred = getPredicate(grade100).label;
+      const timestamp = new Date().toISOString();
+
+      const levelScores = LEVELS.map(lvl => {
+        const c = lvl.questionIds.filter(qid => state.answersMap[qid]?.isCorrect).length;
+        return `${c}/${lvl.questionIds.length}`;
+      });
+
+      const headers = [
+        "Timestamp",
+        "Nama_Siswa",
+        "Kelas",
+        "Nomor_Absen",
+        "Nilai_Akhir_100",
+        "Predikat",
+        "Jawaban_Benar",
+        "Total_Soal",
+        "Poin_Game",
+        "Max_Kombo",
+        "Level_1_Istighfar",
+        "Level_2_Asmaul_Husna",
+        "Level_3_Qada_Qadar",
+        "Level_4_Akhlak",
+        "Level_5_Studi_Kasus",
+        "Kode_Validasi"
+      ];
+
+      const row = [
+        timestamp,
+        `"${state.student.name.replace(/"/g, '""')}"`,
+        `"${state.student.kelas.replace(/"/g, '""')}"`,
+        state.student.absen,
+        grade100,
+        `"${pred}"`,
+        correctCount,
+        totalQuestions,
+        state.score,
+        state.maxCombo,
+        ...levelScores,
+        state.validationCode
+      ];
+
+      const csvContent = "\uFEFF" + headers.join(",") + "\n" + row.join(",");
+      const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+      const url = URL.createObjectURL(blob);
+
+      const a = document.createElement("a");
+      const safeName = state.student.name.replace(/[^a-zA-Z0-9]/g, "_") || "Siswa";
+      a.href = url;
+      a.download = `Rekap_ASAS_Akidah6_${state.student.absen}_${safeName}.csv`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+
+      showToast("📥 File CSV berhasil diunduh! Siap dibuka di Google Sheets/Classroom.");
+    });
+
+    document.getElementById("btn-final-to-map").addEventListener("click", () => {
+      SoundFX.click();
+      renderLevelMap();
+      switchScreen("screen-map");
+    });
+
+    document.getElementById("btn-play-again").addEventListener("click", () => {
+      SoundFX.click();
+      state.unlockedLevel = 1;
+      state.completedLevels = [];
+      state.lives = MAX_LIVES;
+      state.score = 0;
+      state.combo = 0;
+      state.maxCombo = 0;
+      state.answersMap = {};
+      state.validationCode = "";
+      saveState();
+      startLevel(1);
+    });
+
+    // Boot application on load
+    window.addEventListener("load", initApp);
+  </script>
+</body>
+</html>
